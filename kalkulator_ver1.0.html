@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator Premium</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px;
+      background-color: #000;
+      color: #fff;
+      gap: 40px;
+    }
+
+    .calculator {
+      background: #333;
+      padding: 20px;
+      border-radius: 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .display {
+      width: 100%;
+      height: 70px;
+      background: #000;
+      border: none;
+      border-radius: 20px;
+      font-size: 2em;
+      color: #0f0;
+      text-align: right;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+
+    button {
+      height: 70px;
+      font-size: 1.3em;
+      border: none;
+      border-radius: 50%;
+      background: #505050;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.1s;
+    }
+
+    button:hover {
+      background: #606060;
+      transform: scale(1.05);
+    }
+
+    button.operator {
+      background: #f39c12;
+    }
+
+    button.clear {
+      background: #e74c3c;
+    }
+
+    .equal {
+      background: #27ae60;
+      color: white;
+      height: 70px;
+      width: 100%;
+      font-size: 1.5em;
+      border-radius: 20px;
+      margin-top: 20px;
+    }
+
+    .extra-functions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 2px solid #555;
+      width: 100%;
+    }
+
+    .extra-functions h3 {
+      grid-column: span 2;
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #0f0;
+    }
+
+    .extra-functions button {
+      background: #444;
+      font-size: 0.9em;
+      border-radius: 10px;
+      height: 50px;
+      width: 100%;
+      padding: 0 10px;
+    }
+
+    .extra-functions button:hover {
+      background: #666;
+    }
+
+    .legend {
+      max-width: 400px;
+      background: #111;
+      border-radius: 20px;
+      padding: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      box-shadow: 0 0 15px #0f0;
+    }
+
+    .legend h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #0f0;
+    }
+
+    .legend code {
+      background: #222;
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #0f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" class="display" id="display" placeholder="0" disabled />
+
+    <div class="buttons">
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button class="operator" onclick="appendValue('/')">÷</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button class="operator" onclick="appendValue('*')">×</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button class="operator" onclick="appendValue('-')">−</button>
+
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button class="operator" onclick="appendValue('+')">+</button>
+    </div>
+
+    <div class="extra-functions">
+      <h3>Zaawansowane Funkcje</h3>
+      <button onclick="convertBinary()">Na Binarny</button>
+      <button onclick="convertOctal()">Na Ósemkowy</button>
+      <button onclick="convertDecimalFromBinary()">BIN → DEC</button>
+      <button onclick="convertDecimalFromOctal()">OCT → DEC</button>
+      <button onclick="appendValue('^')">Potęgowanie (x^y)</button>
+      <button onclick="squareRoot()">Pierwiastek (√x)</button>
+      <button onclick="percentage()">Procent (%)</button>
+      <button onclick="quantumCalculate()">Kalkulacja Kwantowa</button>
+    </div>
+
+    <button class="equal" onclick="calculateResult()">=</button>
+  </div>
+
+  <div class="legend">
+    <h2>📘 Instrukcja & Legenda</h2>
+    <ul>
+      <li><code>^</code> – potęgowanie, np. <code>2^3</code> → <code>8</code></li>
+      <li><code>√</code> – pierwiastek kwadratowy</li>
+      <li><code>%</code> – procent, np. <code>50%</code> → <code>0.5</code></li>
+      <li><code>BIN</code> – dziesiętna na binarną</li>
+      <li><code>OCT</code> – dziesiętna na ósemkową</li>
+      <li><code>BIN→DEC</code> – binarna na dziesiętną</li>
+      <li><code>OCT→DEC</code> – ósemkowa na dziesiętną</li>
+      <li><code>Q</code> – pseudolosowa "kwantowa" kalkulacja</li>
+    </ul>
+  </div>
+
+  <script>
+    function appendValue(value) {
+      const display = document.getElementById('display');
+      if (value === '^') {
+        display.value += '**';
+      } else {
+        display.value += value;
+      }
+    }
+
+    function clearDisplay() {
+      document.getElementById('display').value = '';
+    }
+
+    function calculateResult() {
+      const display = document.getElementById('display');
+      try {
+        display.value = eval(display.value);
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    function convertBinary() {
+      const display = document.getElementById('display');
+      let val = parseInt(display.value, 10);
+      display.value = !isNaN(val) ? val.toString(2) : 'Error';
+    }
+
+    function convertOctal() {
+      const display = document.getElementById('display');
+      let val = parseInt(display.value, 10);
+      display.value = !isNaN(val) ? val.toString(8) : 'Error';
+    }
+
+    function convertDecimalFromBinary() {
+      const display = document.getElementById('display');
+      try {
+        display.value = parseInt(display.value, 2).toString(10);
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    function convertDecimalFromOctal() {
+      const display = document.getElementById('display');
+      try {
+        display.value = parseInt(display.value, 8).toString(10);
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    function squareRoot() {
+      const display = document.getElementById('display');
+      try {
+        display.value = Math.sqrt(eval(display.value));
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    function percentage() {
+      const display = document.getElementById('display');
+      try {
+        display.value = eval(display.value) / 100;
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    function quantumCalculate() {
+      const display = document.getElementById('display');
+      try {
+        let val = eval(display.value);
+        display.value = `~${(Math.random() * val).toFixed(4)} (kwant)`;
+      } catch {
+        display.value = 'Error';
+      }
+    }
+  </script>
+</body>
+</html>
